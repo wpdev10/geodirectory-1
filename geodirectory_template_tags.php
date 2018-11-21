@@ -54,7 +54,9 @@ function geodir_templates_scripts()
         'geodir_lazy_load' => get_option('geodir_lazy_load',1),
         'geodir_ajax_url' => geodir_get_ajax_url(),
         'geodir_gd_modal' => (int)get_option('geodir_disable_gb_modal'),
-        'is_rtl' => is_rtl() ? 1 : 0 // fix rtl issue
+        'is_rtl' => is_rtl() ? 1 : 0, // fix rtl issue
+		'lightBox_txtImage' => addslashes(__('Image', 'geodirectory')),
+		'lightBox_txtOf' => addslashes(__('of', 'geodirectory')),
     );
 
     /**
@@ -326,8 +328,9 @@ function geodir_templates_styles()
     wp_enqueue_style('geodirectory-frontend-rtl-style');
     }
 
-    wp_register_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css', array(), GEODIRECTORY_VERSION);
-    wp_enqueue_style('font-awesome');
+    wp_register_script('font-awesome', 'https://use.fontawesome.com/releases/v5.5.0/js/all.js#faload', array('font-awesome-shim'), GEODIRECTORY_VERSION);
+    wp_register_script('font-awesome-shim', 'https://use.fontawesome.com/releases/v5.5.0/js/v4-shims.js', array(), GEODIRECTORY_VERSION);
+    wp_enqueue_script( 'font-awesome' );
 
 
 }
@@ -680,7 +683,7 @@ function geodir_add_sharelocation_scripts() {
                                 }
                             });
                     } else if (window.gdMaps === 'osm') {
-                        geocodePositionOSM(false, address, false, false, 
+                        geocodePositionOSM(false, address<?php echo ($near_add ? '+", ' . $near_add . '"' : '') . $near_add2;?>, false, false,
                             function(geo) {
                                 if (typeof geo !== 'undefined' && geo.lat && geo.lon) {
                                     updateSearchPosition(geo, $form);
@@ -822,3 +825,31 @@ function geodir_fix_script_conflict() {
     }
 }
 add_action( 'wp_enqueue_scripts', 'geodir_fix_script_conflict', 100 );
+
+/**
+ * make fontawesome search for inline before and after icons
+ *
+ * @param $url
+ *
+ * @return mixed|string
+ */
+function geodir_fontawesome_defer($url)
+{
+    if (strpos($url, 'use.fontawesome.com/releases/')===false)
+        return $url;
+    else if (is_admin())
+        return str_replace('#faload', '', $url);
+    else
+        return $url."' data-search-pseudo-elements defer='defer";
+}
+//add_filter('clean_url', 'geodir_fontawesome_defer', 11, 1); // let users add this as a snippet if they need it
+
+/**
+ * Dequeue our fontawesome if using BB page.
+ */
+function geodir_fix_beaver_builder(){
+    if(isset($_REQUEST['fl_builder'])){
+        wp_dequeue_script( 'font-awesome' );
+    }
+}
+add_filter('wp_print_scripts','geodir_fix_beaver_builder',100);

@@ -255,7 +255,7 @@ function gdsc_manage_category_choice($post_type, $category)
 
     $taxonomies = geodir_get_taxonomies($post_type);
 
-    $categories = get_terms(array('taxonomy' => $taxonomies[0]));
+    $categories = get_terms(array('taxonomy' => $taxonomies[0],'hide_empty' => false));
 
     $cat_id = 0;
 
@@ -785,7 +785,7 @@ function geodir_sc_gd_listings_output($args = array()) {
 			<?php
             if (!$geodir_ajax) { 
 			?>
-            </div><p class="geodir-sclisting-loading" style="display:none;"><i class="fa fa-cog fa-spin"></i></p></div>
+            </div><p class="geodir-sclisting-loading" style="display:none;"><i class="fas fa-cog fa-spin"></i></p></div>
 <script type="text/javascript">
 /* <![CDATA[ */
 jQuery(document).on('click', '.<?php echo trim($identifier);?> .gd-wgt-page', function(e) {

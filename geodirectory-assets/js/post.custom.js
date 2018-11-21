@@ -17,7 +17,7 @@ function geodir_get_popup_forms(e, i, r, o) {
         s = s+"&lang="+icl_vars.current_language;
     }
 
-    jQuery.gdmodal('<div id="basic-modal-content" class="clearfix simplemodal-data" style="display: block;"><div class="geodir-modal-loading"><i class="fa fa-refresh fa-spin "></i></div></div>'), jQuery.post(s, {
+    jQuery.gdmodal('<div id="basic-modal-content" class="clearfix simplemodal-data" style="display: block;"><div class="geodir-modal-loading"><i class="fas fa-sync fa-spin "></i></div></div>'), jQuery.post(s, {
         popuptype: r,
         post_id: d
     }).done(function(i) {
@@ -67,7 +67,9 @@ jQuery(document).ready(function() {
         imageBtnNext: geodir_var.geodir_plugin_url + "/geodirectory-assets/images/lightbox-btn-next.gif",
         imageBtnPrev: geodir_var.geodir_plugin_url + "/geodirectory-assets/images/lightbox-btn-prev.gif",
         imageBtnClose: geodir_var.geodir_plugin_url + "/geodirectory-assets/images/lightbox-btn-close.gif",
-        imageBlank: geodir_var.geodir_plugin_url + "/geodirectory-assets/images/lightbox-blank.gif"
+        imageBlank: geodir_var.geodir_plugin_url + "/geodirectory-assets/images/lightbox-blank.gif",
+		txtImage: geodir_var.lightBox_txtImage,
+		txtOf: geodir_var.lightBox_txtOf,
     }), jQuery("#geodir_carousel").flexslider({
         animation: "slide",
         namespace: "geodir-",

@@ -287,7 +287,7 @@ function geodir_posts_fields($fields) {
         }
         $s = stripslashes_deep( $s );
         $s = wp_specialchars_decode($s,ENT_QUOTES);
-		$fields .= $wpdb->prepare(", CASE WHEN " . $table . ".is_featured='1' THEN 1 ELSE 0 END AS gd_featured, CASE WHEN " . $wpdb->posts . ".post_title LIKE %s THEN 1 ELSE 0 END AS gd_exacttitle," . $gd_titlematch_part . " CASE WHEN ( " . $wpdb->posts . ".post_title LIKE %s OR " . $wpdb->posts . ".post_title LIKE %s OR " . $wpdb->posts . ".post_title LIKE %s ) THEN 1 ELSE 0 END AS gd_titlematch, CASE WHEN ( " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s ) THEN 1 ELSE 0 END AS gd_content", array($s, $s, $s . '%', '% ' . $s . '%', $s, $s . ' %', '% ' . $s . ' %', '% ' . $s));
+		$fields .= $wpdb->prepare(", CASE WHEN " . $table . ".is_featured='1' THEN 1 ELSE 0 END AS gd_featured, CASE WHEN " . $wpdb->posts . ".post_title LIKE %s THEN 1 ELSE 0 END AS gd_exacttitle," . $gd_titlematch_part . " CASE WHEN ( " . $wpdb->posts . ".post_title LIKE %s OR " . $wpdb->posts . ".post_title LIKE %s OR " . $wpdb->posts . ".post_title LIKE %s ) THEN 1 ELSE 0 END AS gd_titlematch, CASE WHEN ( " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s OR " . $wpdb->posts . ".post_content LIKE %s ) THEN 1 ELSE 0 END AS gd_content", array($s, $s, $s . '%', '% ' . $s . '%', $s, $s . ' %', '% ' . $s . ' %', '% ' . $s,'%>' . $s . '%','% ' . $s . ','));
     }
 
     return $fields;
@@ -611,6 +611,7 @@ function geodir_post_where()
                 add_filter('posts_where', 'searching_filter_where', 1);
 
             add_filter('posts_orderby', 'geodir_posts_orderby', 1);
+			add_filter( 'posts_clauses', 'geodir_posts_having', 99999, 2 );
 
         } elseif (geodir_is_page('author')) {
 
@@ -874,8 +875,8 @@ function searching_filter_where($where) {
         $rlat2 = is_numeric(max($lat1, $lat2)) ? max($lat1, $lat2) : '';
 
 
-
-	    $where .= " AND ( ( $wpdb->posts.post_title LIKE \"$s\" $better_search_terms)
+		$post_title_where = $s != "" ? "{$wpdb->posts}.post_title LIKE \"$s\"" : "1=1";
+	    $where .= " AND ( ( $post_title_where $better_search_terms)
 			                    $content_where 
 								$terms_sql 
 							)
@@ -1177,3 +1178,48 @@ function geodir_jetpack_fix_post_types_search(){
     }
 }
 add_action( 'plugins_loaded','geodir_jetpack_fix_post_types_search', 10 );
+
+function geodir_posts_having( $clauses, $query = array() ) {
+	global $wpdb, $gd_session, $geodir_post_type, $dist, $mylat, $mylon, $snear;
+
+	if ( geodir_is_gd_main_query( $query ) ) {
+		$support_location = $geodir_post_type && function_exists( 'geodir_cpt_no_location' ) && ! geodir_cpt_no_location( $geodir_post_type );
+
+		if ( $support_location && $dist && ( $snear != '' || $gd_session->get( 'all_near_me' ) ) ) {
+			if ( $gd_session->get( 'near_me_range' ) && ! isset( $_REQUEST['sdist'] ) ) {
+				$dist = $gd_session->get( 'near_me_range' );
+
+				if ( get_option( 'geodir_search_dist_1' ) == 'km' ) {
+					$dist = $dist * 1.6093440001;
+				}
+			}
+
+			/* 
+			 * The HAVING clause is often used with the GROUP BY clause to filter groups based on a specified condition. 
+			 * If the GROUP BY clause is omitted, the HAVING clause behaves like the WHERE clause.
+			 */
+			if ( strpos( $clauses['where'], ' HAVING ') === false && strpos( $clauses['groupby'], ' HAVING ') === false ) {
+				$having = $wpdb->prepare( " HAVING distance <= %f ", $dist );
+				if ( trim( $clauses['groupby'] ) != '' ) {
+					$clauses['groupby'] .= $having;
+				} else {
+					$clauses['where'] .= $having;
+				}
+			}
+		}
+	}
+
+	return $clauses;
+}
+
+function geodir_is_gd_main_query( $query ){
+	$is_main_query = false;
+
+	if(isset($query->query->gd_is_geodir_page) && $query->query->gd_is_geodir_page) {
+		$is_main_query = true;
+	}elseif(isset($query->query['gd_is_geodir_page']) && $query->query['gd_is_geodir_page']) {
+		$is_main_query = true;
+	}
+
+	return $is_main_query;
+}

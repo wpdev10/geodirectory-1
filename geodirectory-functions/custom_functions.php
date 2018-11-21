@@ -759,7 +759,7 @@ function geodir_related_posts_display( $request ) {
 			$arr_detail_page_tabs['related_listing']['is_display'] = true;
 		}
 
-		$is_display        = $arr_detail_page_tabs['related_listing']['is_display'];
+		$is_display        = ! empty( $arr_detail_page_tabs['related_listing'] ) && isset( $arr_detail_page_tabs['related_listing']['is_display'] ) ? $arr_detail_page_tabs['related_listing']['is_display'] : false;
 		$origi_post        = $post;
 		$post_type         = '';
 		$post_id           = '';
@@ -1621,9 +1621,9 @@ function geodir_show_detail_page_tabs() {
 	<div class="geodir-tabs" id="gd-tabs" style="position:relative;">
 		<?php if ( ! $tab_list ){ ?>
 		<div id="geodir-tab-mobile-menu">
-			<i class="fa fa-bars"></i>
+			<i class="fas fa-bars"></i>
 			<span class="geodir-mobile-active-tab"><?php echo $active_tab_name; ?></span>
-			<i class="fa fa-sort-desc"></i>
+			<i class="fas fa-sort-down"></i>
 		</div>
 		<dl class="geodir-tab-head">
 			<?php
@@ -1718,7 +1718,7 @@ function geodir_show_detail_page_tabs() {
 								// some browsers hide $_POST data if used for embeds so we replace with a placeholder
 								if ( $preview ) {
 									if ( $video ) {
-										echo "<span class='gd-video-embed-preview' ><p class='gd-video-preview-text'><i class=\"fa fa-video-camera\" aria-hidden=\"true\"></i><br />" . __( 'Video Preview Placeholder', 'geodirectory' ) . "</p></span>";
+										echo "<span class='gd-video-embed-preview' ><p class='gd-video-preview-text'><i class=\"fas fa-video\" aria-hidden=\"true\"></i><br />" . __( 'Video Preview Placeholder', 'geodirectory' ) . "</p></span>";
 									}
 								} else {
 
@@ -2282,7 +2282,7 @@ function geodir_search_form_submit_button() {
 	$new_style = get_option( 'geodir_show_search_old_search_from' ) ? false : true;
 
 	if ( $new_style ) {
-		$default_search_button_label = '<i class="fa fa-search" aria-hidden="true"></i>';
+		$default_search_button_label = '<i class="fas fa-search" aria-hidden="true"></i>';
 	}else{
 		$default_search_button_label = 'Search';
 	}
@@ -2309,10 +2309,10 @@ function geodir_search_form_submit_button() {
 
 	if ( $new_style ) {
 		?>
-		<button class="geodir_submit_search <?php echo $fa_class; ?>"><?php _e( $default_search_button_label ,'geodirectory'); ?></button>
+		<button class="geodir_submit_search "><?php _e( $default_search_button_label ,'geodirectory'); ?></button>
 	<?php }else{?>
 		<input type="button" value="<?php esc_attr_e( $default_search_button_label ); ?>"
-		       class="geodir_submit_search <?php echo $fa_class; ?>"/>
+		       class="geodir_submit_search "/>
 	<?php }
 }
 
@@ -3093,7 +3093,7 @@ function geodir_wpml_frontend_duplicate_listing( $content_html ) {
 					$wpml_content .= '<tr><td style="padding:4px">' . $lang['english_name'] . $duplicates_text . '</td><td>&nbsp;</td><td style="text-align:center;">';
 
 					if ( $translated ) {
-						$wpml_content .= '<i class="fa fa-check" style="color:orange"></i>';
+						$wpml_content .= '<i class="fas fa-check" style="color:orange"></i>';
 					} else {
 						$wpml_content .= '<input name="gd_icl_dup[]" value="' . $lang_code . '" title="' . esc_attr__( 'Create duplicate', 'geodirectory' ) . '" type="checkbox">';
 					}
@@ -3103,7 +3103,7 @@ function geodir_wpml_frontend_duplicate_listing( $content_html ) {
 
 				if ( $needs_translation ) {
 					$nonce = wp_create_nonce( 'geodir_duplicate_nonce' );
-					$wpml_content .= '<tr><td>&nbsp;</td><td style="vertical-align:middle;padding-top:13px"><i style="display:none" class="fa fa-spin fa-refresh"></i></td><td style="padding:15px 3px 3px 3px;text-align:right"><button data-nonce="' . esc_attr( $nonce ) . '" data-post-id="' . $post_id . '" id="gd_make_duplicates" class="button-secondary">' . __( 'Duplicate', 'geodirectory' ) . '</button></td></tr>';
+					$wpml_content .= '<tr><td>&nbsp;</td><td style="vertical-align:middle;padding-top:13px"><i style="display:none" class="fas fa-spin fa-sync"></i></td><td style="padding:15px 3px 3px 3px;text-align:right"><button data-nonce="' . esc_attr( $nonce ) . '" data-post-id="' . $post_id . '" id="gd_make_duplicates" class="button-secondary">' . __( 'Duplicate', 'geodirectory' ) . '</button></td></tr>';
 				}
 
 				$wpml_content .= '</tbody></table>';

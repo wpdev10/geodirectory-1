@@ -1,9 +1,33 @@
-v1.6.31
+v1.3.36
+Event search not showing results for near location search - FIXED
+
+v1.6.35
+Font Awesome Pseudo-Elements flag disabled by default - CHANGED
+
+v1.6.34
+CSS Pseudo-Elements now enabled for Font Awesome - CHANGED
+Disable our own FA on beaver builder pages until BB updates to FA5 JS - FIXED
+Map child categories reveal icon not showing correctly - FIXED
+Map child categories show/hide toggle not working - FIXED
+
+v1.6.32
 Fix GD search conflict with Jetpack by WordPress.com ElasticSearch - FIXED
 Change CPT settings sorting options description - CHANGED
 Special apostrophe character not supported with search listing - FIXED
 OSM cant handel geocode search of UK post codes missing the space - FIXED
 Search adds all terms to query if search field is blank - FIXED
+Deleted tag still displayed on the listing detail page - FIXED
+Use of getenv('REMOTE_ADDR') with PHP v7.2.1 results in internal server error - FIXED
+Issue with listing slug WPML translation - FIXED
+Listing shortcode shows posts from all categories if category has no post - FIXED
+Location me page shows wrong results on map when map cache enabled - FIXED
+CPT archive pages not showing any results - FIXED
+Unable to translate text on detail page photos popup - FIXED
+Search radius settings not filtering the results - FIXED
+OSM near search geolocation not adding on default location to search - FIXED
+Google maps CSS changes means map info-window close button does not work - FIXED
+Shadow missing from fav listing icon - FIXED
+Update Font Awesome to v5 JS version - CHANGED
 
 v1.6.30
 Yoast v8.x shows error on backend edit listing page - FIXED
